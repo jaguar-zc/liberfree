@@ -1,5 +1,16 @@
 # liberfree-http:1.0-RELEASE
-## API 
+
+ 
+### 功能
+- [x] GET请求
+- [x] POST请求
+- [x] PUT请求
+- [x] PATCH请求
+- [x] DELETE请求 
+- [ ] 缓存
+- [x] https(单向)
+- [ ] https(双向) 
+
 
 ### maven maven.apache.org
 ```
@@ -20,6 +31,8 @@
 ```
     compile(group = "cn.liberfree", name = "http", version = "1.0-RELEASE")
 ```
+
+## API 
 
 `GET`
 `POST`
