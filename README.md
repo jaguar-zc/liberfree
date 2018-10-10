@@ -1,5 +1,26 @@
 # liberfree-http:1.0-RELEASE
 ## API 
+
+### maven maven.apache.org
+```
+    <dependency>
+        <groupId>cn.liberfree</groupId>
+        <artifactId>http</artifactId>
+        <version>1.0-RELEASE</version>
+    </dependency>
+```
+
+### Gradle gradle.org
+```
+    compile 'cn.liberfree:http:1.0-RELEASE'
+```
+
+### Gradle Kotlin DSL
+
+```
+    compile(group = "cn.liberfree", name = "http", version = "1.0-RELEASE")
+```
+
 `GET`
 `POST`
 `DELETE`
