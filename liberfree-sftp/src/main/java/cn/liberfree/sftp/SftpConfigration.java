@@ -25,13 +25,13 @@ public class SftpConfigration {
     private Integer minConnections = 3; //空闲时最小连接数
     private Integer maxConnections = 10;    //空闲时最大连接数
     private Integer initConnection = 5; //初始化连接数量
-    private Long connTimeOut = 1000L;   //重复获得连接的频率
+    private Long connTimeOut = 1L;   //重复获得连接的频率
     private Integer maxActiveConnections = 100; //最大允许的连接数
     private Long ConnectionTimeOut = 1000*60*20L;   //连接超时时间
     private Boolean isCurrentConnection = true;//是否获得当前连接
     private Boolean isCheckPool = true;//是否定时检查连接池
-    private Long lazyCheck = 1000*60*60L;   //延迟多少时间后开始检查
-    private Long periodCheck = 1000*60*60L; //检查频率
+    private Long lazyCheck = 1000L;   //延迟多少时间后开始检查
+    private Long periodCheck = 1000*60L; //检查频率
 
 
     public String getUsername() {

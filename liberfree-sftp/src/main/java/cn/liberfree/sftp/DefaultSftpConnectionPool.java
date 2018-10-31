@@ -115,7 +115,11 @@ public class DefaultSftpConnectionPool implements SftpConnectionPool {
             activeConnections.remove(conn);
             contActive--;
             threadLocal.remove();
-            notifyAll();
+            try {
+                notifyAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -151,7 +155,6 @@ public class DefaultSftpConnectionPool implements SftpConnectionPool {
     }
 
     public void checkPool() {
-// TODO Auto-generated method stub
         if(configration.getCheckPool()){
             new Timer().schedule(new TimerTask() {
                 public void run() {

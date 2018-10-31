@@ -13,17 +13,21 @@ import java.util.Vector;
 
 public class SFTPUtil {
 
-	public static void upload(ChannelSftp sftp,String path, String sftpFileName, InputStream input) throws SftpException {
+	private static String ROOT = "/";
+
+
+	public static void upload(SftpConnectionPool connectionPool,String path, String sftpFileName, InputStream input) throws SftpException {
+		ChannelSftp sftp = connectionPool.getCurrentConnection();
 		try {
 			sftp.cd(path);
 		} catch (SftpException e) {
 			// dir no exist, create folder
-			String[] dirs = path.split("/");
+			String[] dirs = path.split(ROOT);
 			String tempPath = "";
 			for (String dir : dirs) {
 				if (null == dir || "".equals(dir))
 					continue;
-				tempPath += "/" + dir;
+				tempPath += ROOT + dir;
 				try {
 					sftp.cd(tempPath);
 				} catch (SftpException ex) {
@@ -32,32 +36,45 @@ public class SFTPUtil {
 				}
 			}
 		}
-		sftp.put(input, sftpFileName);
 		try {
-			sftp.cd("/");
+			sftp.put(input, sftpFileName);
+			sftp.cd(ROOT);
 		}catch (Exception e){
 			e.printStackTrace();
+		}finally {
+			connectionPool.close(sftp);
 		}
 	}
 
-	public static byte[] download(ChannelSftp sftp,String downloadFile) throws SftpException, IOException {
+	public static byte[] download(SftpConnectionPool connectionPool,String downloadFile) throws SftpException, IOException {
+		ChannelSftp sftp = connectionPool.getCurrentConnection();
 		try (InputStream is = sftp.get(downloadFile)) {
 			return IOUtils.toByteArray(is);
 		} catch (IOException ex) {
 			throw ex;
+		}finally {
+			connectionPool.close(sftp);
 		}
 	}
 
-	public static void delete(ChannelSftp sftp,String directory, String deleteFile) throws SftpException {
-		sftp.cd(directory);
-		sftp.rm(deleteFile);
+	public static void delete(SftpConnectionPool connectionPool,String directory, String deleteFile) throws SftpException {
+		ChannelSftp sftp = connectionPool.getCurrentConnection();
+		try {
+			sftp.cd(directory);
+			sftp.rm(deleteFile);
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally {
+			connectionPool.close(sftp);
+		}
 	}
 
-	public static boolean exist(ChannelSftp sftp,String path){
+	public static boolean exist(SftpConnectionPool connectionPool,String path){
+		ChannelSftp sftp = connectionPool.getCurrentConnection();
 		InputStream inputStream = null;
 		try {
 			System.out.println(sftp.pwd());
-			sftp.cd("/");
+			sftp.cd(ROOT);
 			inputStream = sftp.get(path);
 			byte[] bytes = new byte[1];
 			inputStream.read(bytes, 0, bytes.length);
@@ -72,6 +89,11 @@ public class SFTPUtil {
 					e.printStackTrace();
 				}
 			}
+			try {
+				connectionPool.close(sftp);
+			} catch (SftpException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -85,7 +107,7 @@ public class SFTPUtil {
 	}
 
 	public static String getFileNameByUrl(String path){
-		int i = path.lastIndexOf("/");
+		int i = path.lastIndexOf(ROOT);
 		if(i == -1){
 			return path;
 		}
@@ -99,11 +121,9 @@ public class SFTPUtil {
 	public static void main(String[] args) throws Exception {
 
 		SftpConfigration sftpConfigration = new SftpConfigration("test", "123456","47.75.127.229", 22,null);
-
 		SftpConnectionPool connectionPool = new DefaultSftpConnectionPool(sftpConfigration);
-		ChannelSftp currentConnection = connectionPool.getCurrentConnection();
-		System.out.println(SFTPUtil.exist(currentConnection, "/dz/images/8bbd933d-c724-4429-897e-547837e9040a.jpg"));
-
+		connectionPool.checkPool();
+		System.out.println(SFTPUtil.exist(connectionPool, "/dz/images/8bbd933d-c724-4429-897e-547837e9040a.jpg"));
 ////		SFTPUtil u = new SFTPUtil("192.168.4.201", 22, "test", "test");
 //		SFTPUtil u = new SFTPUtil("47.75.127.229", 22, "test", "123456");
 //		u.login();
