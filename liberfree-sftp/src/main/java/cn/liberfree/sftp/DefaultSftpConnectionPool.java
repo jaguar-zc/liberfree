@@ -1,14 +1,19 @@
 package cn.liberfree.sftp;
 
 import com.jcraft.jsch.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 /**
  * @author: zhangchao
- * @time: 2018-10-31 10:26
  **/
 public class DefaultSftpConnectionPool implements SftpConnectionPool {
+
+    public static Logger logger  = LoggerFactory.getLogger(DefaultSftpConnectionPool.class.getName());
+
+
     private SftpConfigration configration;
     private Boolean isActive = false;
     private Integer contActive = 0; //创建记录总数
@@ -19,7 +24,28 @@ public class DefaultSftpConnectionPool implements SftpConnectionPool {
 
     public DefaultSftpConnectionPool(SftpConfigration configration) {
         this.configration = configration;
+        if(logger.isDebugEnabled()){
+            logger.debug("==========================================================");
+            logger.debug("username:{}",this.configration.getUsername());
+            logger.debug("password:{}",this.configration.getPassword());
+            logger.debug("host:{}",this.configration.getHost());
+            logger.debug("port:{}",this.configration.getPort());
+            logger.debug("privateKey:{}",this.configration.getPrivateKey());
+            logger.debug("poolName:{}",this.configration.getPoolName());
+            logger.debug("minConnections:{}",this.configration.getMinConnections());
+            logger.debug("maxConnections:{}",this.configration.getMaxConnections());
+            logger.debug("initConnection:{}",this.configration.getInitConnection());
+            logger.debug("connTimeOut:{}",this.configration.getConnTimeOut());
+            logger.debug("maxActiveConnections:{}",this.configration.getMaxActiveConnections());
+            logger.debug("ConnectionTimeOut:{}",this.configration.getConnectionTimeOut());
+            logger.debug("isCurrentConnection:{}",this.configration.getCurrentConnection());
+            logger.debug("isCheckPool:{}",this.configration.getCheckPool());
+            logger.debug("lazyCheck:{}",this.configration.getLazyCheck());
+            logger.debug("periodCheck:{}",this.configration.getPeriodCheck());
+            logger.debug("==========================================================");
+        }
         init();
+        checkPool();
     }
 //
 //    private static SftpConnectionPool pool;
@@ -65,7 +91,6 @@ public class DefaultSftpConnectionPool implements SftpConnectionPool {
 
 
     public ChannelSftp getConnection() {
-        // TODO Auto-generated method stub
         ChannelSftp conn = null;
         try {
             if(this.contActive < this.configration.getMaxActiveConnections()){
@@ -87,7 +112,6 @@ public class DefaultSftpConnectionPool implements SftpConnectionPool {
                 this.contActive++;
             }
         } catch (Exception e) {
-            // TODO: handle exception
             e.printStackTrace();
         }
         return conn;
@@ -109,7 +133,6 @@ public class DefaultSftpConnectionPool implements SftpConnectionPool {
     }
 
     public void close(ChannelSftp conn) throws SftpException {
-        // TODO Auto-generated method stub
         if(isVaild(conn) && !(freeConnections.size()> configration.getMaxConnections())){
             freeConnections.add(conn);
             activeConnections.remove(conn);
@@ -124,14 +147,12 @@ public class DefaultSftpConnectionPool implements SftpConnectionPool {
     }
 
     public void destroy() {
-        // TODO Auto-generated method stub
         for (ChannelSftp conn : this.freeConnections) {
             try {
                 if(isVaild(conn)) {
                     conn.disconnect();
                 }
             } catch (Exception e) {
-                // TODO: handle exception
                 e.printStackTrace();
             }
         }
@@ -142,7 +163,6 @@ public class DefaultSftpConnectionPool implements SftpConnectionPool {
                     conn.disconnect();
                 }
             } catch (Exception e) {
-                // TODO: handle exception
                 e.printStackTrace();
             }
         }
@@ -158,9 +178,9 @@ public class DefaultSftpConnectionPool implements SftpConnectionPool {
         if(configration.getCheckPool()){
             new Timer().schedule(new TimerTask() {
                 public void run() {
-                    System.out.println("空闲连接数"+freeConnections.size());
-                    System.out.println("活动连接数"+activeConnections.size());
-                    System.out.println("总连接数"+contActive);
+                    logger.debug("空闲连接数"+freeConnections.size());
+                    logger.debug("活动连接数"+activeConnections.size());
+                    logger.debug("总连接数"+contActive);
                 }
             }, configration.getLazyCheck(),configration.getPeriodCheck());
         }

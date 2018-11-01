@@ -5,7 +5,6 @@ import com.jcraft.jsch.SftpException;
 
 /**
  * @author: zhangchao
- * @time: 2018-10-31 10:24
  **/
 public interface SftpConnectionPool {
 
@@ -16,7 +15,6 @@ public interface SftpConnectionPool {
      void close(ChannelSftp conn) throws SftpException; //回收连接
 
      void destroy();  //销毁连接池
-
 
      Boolean isActive();  //获取连接池状态
 

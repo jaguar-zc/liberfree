@@ -1,0 +1,6 @@
+$ gpg --list-keys
+/c/Users/Administrator/.gnupg/pubring.gpg
+-----------------------------------------
+pub   2048R/117A743E 2018-11-01
+uid                  zhangchao <jaguar_zc@sina.com>
+sub   2048R/0A891176 2018-11-01

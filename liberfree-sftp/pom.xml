@@ -10,7 +10,7 @@
     <version>${project.release.version}</version>
     <name>${project.artifactId}</name>
     <url>https://github.com/jaguar-zc/liberfree</url>
-    <description>liberfree-http</description>
+    <description>liberfree-sftp</description>
 
     <licenses>
         <license>
@@ -30,7 +30,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <project.release.version>1.0-SNAPSHOT</project.release.version>
+        <!--<project.release.version>1.0-SNAPSHOT</project.release.version>-->
         <slf4j.version>1.7.25</slf4j.version>
     </properties>
 
@@ -57,8 +57,6 @@
         </dependency>
     </dependencies>
 
-
-
     <developers>
         <developer>
             <name>zhangchao</name>
@@ -74,7 +72,7 @@
         <profile>
             <id>release</id> <!-- 部署要用到 -->
             <properties>
-                <project.release.version>1.0-RELEASE</project.release.version>
+                <project.release.version>1.1-RELEASE</project.release.version>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>

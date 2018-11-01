@@ -1,18 +1,19 @@
 package cn.liberfree.sftp.utils;
-
 import cn.liberfree.sftp.DefaultSftpConnectionPool;
 import cn.liberfree.sftp.SftpConfigration;
 import cn.liberfree.sftp.SftpConnectionPool;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
 public class SFTPUtil {
-
+	public static Logger logger  = LoggerFactory.getLogger(SFTPUtil.class);
 	private static String ROOT = "/";
 
 
@@ -48,11 +49,16 @@ public class SFTPUtil {
 
 	public static byte[] download(SftpConnectionPool connectionPool,String downloadFile) throws SftpException, IOException {
 		ChannelSftp sftp = connectionPool.getCurrentConnection();
-		try (InputStream is = sftp.get(downloadFile)) {
+		InputStream is = null;
+		try{
+			is = sftp.get(downloadFile);
 			return IOUtils.toByteArray(is);
 		} catch (IOException ex) {
 			throw ex;
 		}finally {
+			if(is != null){
+				is.close();
+			}
 			connectionPool.close(sftp);
 		}
 	}
@@ -73,7 +79,7 @@ public class SFTPUtil {
 		ChannelSftp sftp = connectionPool.getCurrentConnection();
 		InputStream inputStream = null;
 		try {
-			System.out.println(sftp.pwd());
+			logger.debug(sftp.pwd());
 			sftp.cd(ROOT);
 			inputStream = sftp.get(path);
 			byte[] bytes = new byte[1];
@@ -122,39 +128,6 @@ public class SFTPUtil {
 
 		SftpConfigration sftpConfigration = new SftpConfigration("test", "123456","47.75.127.229", 22,null);
 		SftpConnectionPool connectionPool = new DefaultSftpConnectionPool(sftpConfigration);
-		connectionPool.checkPool();
 		System.out.println(SFTPUtil.exist(connectionPool, "/dz/images/8bbd933d-c724-4429-897e-547837e9040a.jpg"));
-////		SFTPUtil u = new SFTPUtil("192.168.4.201", 22, "test", "test");
-//		SFTPUtil u = new SFTPUtil("47.75.127.229", 22, "test", "123456");
-//		u.login();
-//		try {
-//			InputStream inputStream = u.sftp.get("/dz/images/8bbd933d-c724-4429-897e-547837e9040a.jpg");
-//			byte[] bytes = new byte[1];
-//			int read = inputStream.read(bytes, 0, bytes.length);
-//			System.out.println(read);
-//			System.out.println("有文件");
-//		}catch (Exception e){
-//			System.out.println("无文件");
-//		}
-
-//		u.upload("/dz/file","git-常用命令.txt",new FileInputStream(new File("D:/git-常用命令.txt")));
-
-
-//		u.login();
-//		byte[] download = u.download("/dz/images/a8a80337-6133-47c3-991c-9ec779163ec9.jpg");
-//		byte[] download = u.download("/dz/images", "23JEQjv-ZKvMXBTe");
-
-//		u.upload("/upload","/images",RandomStringUtils.randomAlphanumeric(10),new FileInputStream(new File("C:\\Users\\Administrator\\Desktop\\1.jpg")));
-
-//		for (int i = 0; i < 10; i++) {
-//			u.upload("/Users/liuguanghua/temp", "/images", RandomStringUtils.randomAlphanumeric(10),
-//					new FileInputStream(new File("/Users/liuguanghua/Pictures/WechatIMG4.jpeg")));
-//		}
-
-//		u.download("/Users/liuguanghua/temp/images", "yS75jq5-vM1gDNDe");
-//		u.download("/Users/liuguanghua/temp/images", "nwmh3XD-x8ERofhC");
-//		u.download("/Users/liuguanghua/temp/images", "FZ41M80-6CEXS11q");
-//		u.download("/Users/liuguanghua/temp/images", "0xo9Bi0-PffXLNFM");
-//		u.logout();
 	}
 }

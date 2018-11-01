@@ -2,7 +2,6 @@ package cn.liberfree.sftp;
 
 /**
  * @author: zhangchao
- * @time: 2018-10-31 10:27
  **/
 public class SftpConfigration {
 
