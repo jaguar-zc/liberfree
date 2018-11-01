@@ -1,5 +1,5 @@
-# liberfree-http:1.0-RELEASE
-
+# liberfree-http:1.1-RELEASE
+# liberfree-sftp:1.1-RELEASE
  
 ### 功能
 - [x] GET请求
@@ -18,6 +18,11 @@
         <groupId>cn.liberfree</groupId>
         <artifactId>http</artifactId>
         <version>1.0-RELEASE</version>
+    </dependency>
+     <dependency>
+        <groupId>cn.liberfree</groupId>
+        <artifactId>sftp</artifactId>
+        <version>1.1-RELEASE</version>
     </dependency>
 ```
 
@@ -39,9 +44,8 @@
 `DELETE`
 `PUT`
 `PATCH` 
-## 使用方法 
-``` java
-
+## 网络请求 
+``` java  
     public static void main(String[] args) { 
 
         Request.Response response = RequestBuilder
@@ -53,8 +57,16 @@
         logger.info(response.getContentString());
         for (Map.Entry<String, String> entry : response.getHeaders().entrySet()) {
             logger.info(entry.getKey()+":"+entry.getValue());
-        }
-
-    }
-
+        } 
+    } 
 ```
+## sftp
+``` java  
+    public static void main(String[] args) { 
+
+    	SftpConfigration sftpConfigration = new SftpConfigration("username", "password","ip", port,null);
+		SftpConnectionPool connectionPool = new DefaultSftpConnectionPool(sftpConfigration);
+		System.out.println(SFTPUtil.exist(connectionPool, "/dz/images/8bbd933d-c724-4429-897e-547837e9040a.jpg"));
+    } 
+```
+	
